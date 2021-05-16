@@ -3,6 +3,7 @@ Items:
   test:
     #修正後のItem
     Material: IRON_AXE
+    Name:
     Lore:
       - 'unti'
       - 'hage'

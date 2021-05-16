@@ -32,8 +32,8 @@ public final class Remake extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equals("remake")) {
+            Player p = (Player) sender;
             if (args.length == 0) {
-                Player p = (Player) sender;
                 if (!p.getInventory().getItemInMainHand().hasItemMeta()) {
                     sender.sendMessage("交換対象のアイテムではないため交換されませんでした");
                     return true;
@@ -49,8 +49,26 @@ public final class Remake extends JavaPlugin {
             }
             if (args[0].equals("help")) {
                 sender.sendMessage("/remake : 手に持っているアイテムが保存されているアイテムの情報と一致した場合入れ替える");
+                if (sender.hasPermission("remake.control")) {
+                    sender.sendMessage("/remake add : オフハンドのアイテム名を交換対象、メインハンドのMaterial、アイテム名、Loreを交換先とします");
+                    sender.sendMessage("/remake remove : 手に持っているアイテムへの交換を削除します");
+                }
                 return true;
             }
+            if (!sender.hasPermission("remake.control")) {
+                return true;
+            }
+            if (args[0].equals("add")) {
+                Material mat = p.getInventory().getItemInMainHand().getType();
+                String name = p.getInventory().getItemInMainHand().getItemMeta().getDisplayName();
+                List<String> lore = p.getInventory().getItemInMainHand().getItemMeta().getLore();
+                ItemMeta meta = p.getInventory().getItemInOffHand().getItemMeta();
+                config.set("Items."+meta.getDisplayName()+"Material",mat.name());
+                config.set("Items."+meta.getDisplayName()+"Name",name);
+                config.set("Items."+meta.getDisplayName()+"Lore",lore);
+                sender.sendMessage("設定しました");
+            }
+            //remove追加
         }
         return true;
     }
@@ -76,6 +94,7 @@ public final class Remake extends JavaPlugin {
 //        ItemStack itemStack = new ItemStack(Material.getMaterial("IRON_AXE"));
         ItemStack itemStack = new ItemStack(Material.getMaterial(config.getString("Items."+itemName+".Material")));
         ItemMeta meta = itemStack.getItemMeta();
+        meta.setDisplayName(config.getString(config.getString("Items."+itemName+".Name")));
         meta.setLore((List<String>) config.getList("Items."+itemName+".Lore"));
         itemStack.setItemMeta(meta);
         itemStack.setAmount(amo);

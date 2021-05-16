@@ -4,3 +4,6 @@ main: ubiquitaku.remake.Remake
 api-version: 1.16
 commands:
   remake:
+permissions:
+  remake.control:
+    default: op
