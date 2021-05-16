@@ -1,0 +1,8 @@
+Items:
+  #修正前の検索かけるためのアイテム名
+  test:
+    #修正後のItem
+    Material: IRON_AXE
+    Lore:
+      - 'unti'
+      - 'hage'
