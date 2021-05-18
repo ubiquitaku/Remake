@@ -51,6 +51,7 @@ public final class Remake extends JavaPlugin {
                 if (sender.hasPermission("remake.control")) {
                     sender.sendMessage("/remake add : オフハンドのアイテム名を交換対象、メインハンドのMaterial、アイテム名、Loreを交換先とします");
                     sender.sendMessage("/remake remove : 手に持っているアイテムへの交換を削除します");
+                    sender.sendMessage("/remake reload : ファイルのリロードをします");
                 }
                 return true;
             }
