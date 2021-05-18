@@ -14,7 +14,6 @@ import java.util.*;
 public final class Remake extends JavaPlugin {
     FileConfiguration config;
     Map<String, String> map;
-    List<String> names;
 
     @Override
     public void onEnable() {
@@ -73,7 +72,6 @@ public final class Remake extends JavaPlugin {
                 reload();
                 sender.sendMessage("設定しました");
             }
-            //remove追加
             if (args[0].equals("remove")) {
                 if (!p.getInventory().getItemInMainHand().hasItemMeta()) {
                     sender.sendMessage("当pluginはアイテム名がデフォルトのアイテムは取り扱っておりません");
@@ -87,6 +85,10 @@ public final class Remake extends JavaPlugin {
                 reload();
                 sender.sendMessage("削除しました");
             }
+            if (args[0].equals("reload")) {
+                fileReload();
+                sender.sendMessage("リロード完了");
+            }
         }
         return true;
     }
@@ -96,7 +98,6 @@ public final class Remake extends JavaPlugin {
         for (String key: config.getConfigurationSection("Items").getKeys(false)){
             map.put(key, config.getString("Items." + key));
         }
-        names = getNames();
     }
 
     public void reload() {
@@ -105,20 +106,17 @@ public final class Remake extends JavaPlugin {
         loadConfig();
     }
 
-    public List getNames() {
-        names = new ArrayList<>();
-        List list = new ArrayList();
-        for (Map.Entry<String,String> m : map.entrySet()) {
-            list.add(m.getKey());
-        }
-        return list;
+    public void fileReload() {
+        reloadConfig();
+        config = getConfig();
+        loadConfig();
     }
 
     public void change(Player p,int amo,String itemName) {
 //        ItemStack itemStack = new ItemStack(Material.getMaterial("IRON_AXE"));
         ItemStack itemStack = new ItemStack(Material.getMaterial(config.getString("Items."+itemName+".Material")));
         ItemMeta meta = itemStack.getItemMeta();
-        meta.setDisplayName(config.getString(config.getString("Items."+itemName+".Name")));
+        meta.setDisplayName(config.getString("Items."+itemName+".Name"));
         meta.setLore((List<String>) config.getList("Items."+itemName+".Lore"));
         itemStack.setItemMeta(meta);
         itemStack.setAmount(amo);
