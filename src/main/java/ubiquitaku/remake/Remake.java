@@ -59,6 +59,10 @@ public final class Remake extends JavaPlugin {
                 return true;
             }
             if (args[0].equals("add")) {
+                if (!p.getInventory().getItemInMainHand().hasItemMeta() || !p.getInventory().getItemInOffHand().hasItemMeta()) {
+                    sender.sendMessage("当pluginはアイテム名がデフォルトのアイテムは取り扱っておりません");
+                    return true;
+                }
                 Material mat = p.getInventory().getItemInMainHand().getType();
                 String name = p.getInventory().getItemInMainHand().getItemMeta().getDisplayName();
                 List<String> lore = p.getInventory().getItemInMainHand().getItemMeta().getLore();
@@ -66,9 +70,23 @@ public final class Remake extends JavaPlugin {
                 config.set("Items."+meta.getDisplayName()+"Material",mat.name());
                 config.set("Items."+meta.getDisplayName()+"Name",name);
                 config.set("Items."+meta.getDisplayName()+"Lore",lore);
+                reload();
                 sender.sendMessage("設定しました");
             }
             //remove追加
+            if (args[0].equals("remove")) {
+                if (!p.getInventory().getItemInMainHand().hasItemMeta()) {
+                    sender.sendMessage("当pluginはアイテム名がデフォルトのアイテムは取り扱っておりません");
+                    return true;
+                }
+                if (!map.containsKey("Items."+p.getInventory().getItemInMainHand().getItemMeta().getDisplayName())) {
+                    sender.sendMessage("そのアイテム名は見つかりませんでした");
+                    return true;
+                }
+                config.set("Items."+p.getInventory().getItemInMainHand().getItemMeta().getDisplayName(),"");
+                reload();
+                sender.sendMessage("削除しました");
+            }
         }
         return true;
     }
@@ -79,6 +97,12 @@ public final class Remake extends JavaPlugin {
             map.put(key, config.getString("Items." + key));
         }
         names = getNames();
+    }
+
+    public void reload() {
+        saveConfig();
+        config = getConfig();
+        loadConfig();
     }
 
     public List getNames() {
