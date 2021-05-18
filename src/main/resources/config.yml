@@ -2,8 +2,8 @@ Items:
   #修正前の検索かけるためのアイテム名
   test:
     #修正後のItem
-    Material: IRON_AXE
-    Name:
+    Material: STONE
+    Name: §a§lTEST
     Lore:
-      - 'unti'
-      - 'hage'
+      - てすと
+      - あああ

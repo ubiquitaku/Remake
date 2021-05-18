@@ -59,7 +59,7 @@ public final class Remake extends JavaPlugin {
                 return true;
             }
             if (args[0].equals("add")) {
-                if (!p.getInventory().getItemInMainHand().hasItemMeta() || !p.getInventory().getItemInOffHand().hasItemMeta()) {
+                if (!p.getInventory().getItemInMainHand().hasItemMeta() || !p.getInventory().getItemInOffHand().hasItemMeta() || !p.getInventory().getItemInMainHand().getItemMeta().hasDisplayName() || !p.getInventory().getItemInOffHand().getItemMeta().hasDisplayName()) {
                     sender.sendMessage("当pluginはアイテム名がデフォルトのアイテムは取り扱っておりません");
                     return true;
                 }
@@ -67,9 +67,9 @@ public final class Remake extends JavaPlugin {
                 String name = p.getInventory().getItemInMainHand().getItemMeta().getDisplayName();
                 List<String> lore = p.getInventory().getItemInMainHand().getItemMeta().getLore();
                 ItemMeta meta = p.getInventory().getItemInOffHand().getItemMeta();
-                config.set("Items."+meta.getDisplayName()+"Material",mat.name());
-                config.set("Items."+meta.getDisplayName()+"Name",name);
-                config.set("Items."+meta.getDisplayName()+"Lore",lore);
+                config.set("Items."+meta.getDisplayName()+".Material",mat.name());
+                config.set("Items."+meta.getDisplayName()+".Name",name);
+                config.set("Items."+meta.getDisplayName()+".Lore",lore);
                 reload();
                 sender.sendMessage("設定しました");
             }
@@ -78,13 +78,24 @@ public final class Remake extends JavaPlugin {
                     sender.sendMessage("当pluginはアイテム名がデフォルトのアイテムは取り扱っておりません");
                     return true;
                 }
-                if (!map.containsKey("Items."+p.getInventory().getItemInMainHand().getItemMeta().getDisplayName())) {
-                    sender.sendMessage("そのアイテム名は見つかりませんでした");
-                    return true;
+//                if (!map.containsValue("Items."+p.getInventory().getItemInMainHand().getItemMeta().getDisplayName()+".Name")) {
+//                    sender.sendMessage("そのアイテム名は見つかりませんでした");
+//                    return true;
+//                }
+                String name = p.getInventory().getItemInMainHand().getItemMeta().getDisplayName();
+                boolean search = false;
+                for (String s : config.getConfigurationSection("Items").getKeys(false)) {
+                    if (config.getString("Items."+s+".Name").equals(name)) {
+                        config.set("Items."+s,null);
+                        reload();
+                        sender.sendMessage("削除しました");
+                        search = true;
+                        break;
+                    }
                 }
-                config.set("Items."+p.getInventory().getItemInMainHand().getItemMeta().getDisplayName(),"");
-                reload();
-                sender.sendMessage("削除しました");
+                if (!search) {
+                    sender.sendMessage("アイテムが見つかりませんでした");
+                }
             }
             if (args[0].equals("reload")) {
                 fileReload();
@@ -103,6 +114,7 @@ public final class Remake extends JavaPlugin {
 
     public void reload() {
         saveConfig();
+        reloadConfig();
         config = getConfig();
         loadConfig();
     }
