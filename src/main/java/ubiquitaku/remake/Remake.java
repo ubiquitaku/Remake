@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -67,9 +68,17 @@ public final class Remake extends JavaPlugin {
                 String name = p.getInventory().getItemInMainHand().getItemMeta().getDisplayName();
                 List<String> lore = p.getInventory().getItemInMainHand().getItemMeta().getLore();
                 ItemMeta meta = p.getInventory().getItemInOffHand().getItemMeta();
+                Map<Enchantment,Integer> enc = meta.getEnchants();
+                List<Map<Enchantment,Integer>> enchant = new ArrayList<>();
+                for (Enchantment e : enc.keySet()) {
+                    Map map = new HashMap();
+                    map.put(e,enc.get(e));
+                    enchant.add(map);
+                }
                 config.set("Items."+meta.getDisplayName()+".Material",mat.name());
                 config.set("Items."+meta.getDisplayName()+".Name",name);
                 config.set("Items."+meta.getDisplayName()+".Lore",lore);
+                config.set("Items."+meta.getDisplayName()+".Enchantments",enchant);
                 reload();
                 sender.sendMessage("設定しました");
             }
@@ -131,6 +140,7 @@ public final class Remake extends JavaPlugin {
         ItemMeta meta = itemStack.getItemMeta();
         meta.setDisplayName(config.getString("Items."+itemName+".Name"));
         meta.setLore((List<String>) config.getList("Items."+itemName+".Lore"));
+
         itemStack.setItemMeta(meta);
         itemStack.setAmount(amo);
         p.getInventory().setItemInMainHand(itemStack);
